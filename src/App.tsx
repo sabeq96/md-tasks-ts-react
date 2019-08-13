@@ -23,18 +23,6 @@ const dbConf: DbConf = {
   })
 }
 
-const db = {
-  mds: [{
-    id: 1,
-    text: "Sample markdown file",
-    modified: 1565548994814,
-  }, {
-    id: 2,
-    text: "Sample markdown file 2",
-    modified: 1565548994814,
-  }]
-}
-
 const getMdsFromDb = (binId: string): Promise<Item[]> => (
   fetch(dbConf.baseUrl + binId)
   .then((response) => ( response.json() ))
@@ -56,6 +44,7 @@ const App: React.FC = () => {
   const [selectedMd, setSelectedMd] = React.useState<Item>(getDraft())
   const [mds, setMds] = React.useState<Item[]>([])
 
+  // Get mds after bin id change
   React.useEffect(() => {
     if (binId) {
       getMdsFromDb(binId).then((mds) => {
@@ -65,6 +54,7 @@ const App: React.FC = () => {
     }
   }, [binId])
 
+  // Get saved binId from chrome
   React.useEffect(() => {
     chrome.storage.sync.get('binId', (data) => {
       if (data.binId) {
@@ -91,10 +81,16 @@ const App: React.FC = () => {
     setMdsToDb(binId, newMds).then(setMds)
   }
 
+  const deleteMd = (value: Item) => {
+    const newMds = [...mds].filter((md) => ( md.id !== value.id ));
+
+    setMdsToDb(binId, newMds).then(setMds)
+  }
+
   return (
     <div className="App">
       <Login setBinId={saveBinId} binId={binId} />
-      <Menu items={mds} setSelectedMd={setSelectedMd} />
+      <Menu items={mds} setSelectedMd={setSelectedMd} deleteMd={deleteMd} />
       <Content selectedMd={selectedMd} onSave={saveMdsHandler} />
     </div>
   )
