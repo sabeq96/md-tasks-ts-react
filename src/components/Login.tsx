@@ -7,9 +7,11 @@ export interface Login {
 
 const Login: React.FC<Login> = ({ setBinId, binId }) => {
   const [value, setValue] = React.useState<string>(binId)
+  const [disabled, setDisabled] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     setValue(binId);
+    setDisabled(Boolean(binId))
   }, [binId])
 
   return (
@@ -17,8 +19,9 @@ const Login: React.FC<Login> = ({ setBinId, binId }) => {
       e.preventDefault()
       setBinId(value);
     }}>
-      <input type="text" placeholder="Bin id" onChange={(e) => setValue(e.target.value)} value={value} />
-      <button type="submit">Ok</button>
+      <input type="text" placeholder="Bin id" onChange={(e) => setValue(e.target.value)} value={value} disabled={disabled} />
+      <button type="submit" disabled={disabled}>Ok</button>
+      <input type="checkbox" checked={disabled} onClick={() => { setDisabled(!disabled) }} />
     </form>
   );
 };

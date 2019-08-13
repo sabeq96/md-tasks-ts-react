@@ -3,8 +3,16 @@ import Login from './components/Login';
 import Content from './components/Content';
 import Menu, { Item } from './components/Menu';
 
-const dbConf = {
+interface dbConf {
+  baseUrl: string,
+  headers: Headers,
+}
+
+const dbConf: dbConf = {
   baseUrl: 'https://api.myjson.com/bins/',
+  headers: new Headers({
+    'content-type': "application/json; charset=utf-8",
+  })
 }
 
 const db = {
@@ -28,7 +36,11 @@ const getMdsFromDb = (binId: string): Promise<Item[]> => (
 )
 
 const setMdsToDb = (binId: string, mds: Item[] ): Promise<Item[]> => (
-  fetch(dbConf.baseUrl + binId, { method: 'PUT', body: JSON.stringify({ mds }) })
+  fetch(dbConf.baseUrl + binId, {
+      method: 'PUT',
+      body: JSON.stringify({ mds }),
+      headers: dbConf.headers,
+  })
   .then((response) => ( response.json() ))
   .then((response) => ( response && response.mds ))
 )
@@ -42,6 +54,7 @@ const App: React.FC = () => {
     if (binId) {
       getMdsFromDb(binId).then((mds) => {
         setMds(mds || [])
+        setSelectedMd(mds[0])
       })
     }
   }, [binId])
@@ -60,18 +73,19 @@ const App: React.FC = () => {
     })
   }
 
+  const saveMdsHandler = (value: Item) => {
+    const index = mds.indexOf(mds.filter((md) => md.id === value.id)[0])
+    const newMds = [...mds]
+    newMds[index] = value
+
+    setMdsToDb(binId, newMds).then(setMds)
+  }
+
   return (
     <div className="App">
       <Login setBinId={saveBinId} binId={binId} />
       <Menu items={mds} setSelectedMd={setSelectedMd} />
-      <Content selectedMd={selectedMd} onSave={(value) => {
-        const index = mds.indexOf(mds.filter((md) => md.id === value.id)[0])
-        console.log(index)
-        const newMds = [...mds]
-        newMds[index] = value
-
-        setMdsToDb(binId, newMds)
-      }} />
+      <Content selectedMd={selectedMd} onSave={saveMdsHandler} />
     </div>
   )
 }

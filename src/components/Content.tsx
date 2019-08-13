@@ -1,5 +1,9 @@
 import React from 'react';
+import Markdown from 'markdown-it';
 import { Item } from './Menu';
+import { insertTab } from '../utils/insertTab';
+
+const Md = new Markdown({ breaks: true });
 
 export interface Content {
   selectedMd: Item
@@ -21,8 +25,7 @@ const Content: React.FC<Content> = ({ selectedMd, onSave }) => {
         {preview ? 'Edycja' : 'Podgląd'}
       </button>
       {preview ? (
-        <div>
-          {currentValue}
+        <div dangerouslySetInnerHTML={{__html: Md.render(currentValue)}}>
         </div>
       ) : (
         <form onSubmit={(e) => {
@@ -34,7 +37,10 @@ const Content: React.FC<Content> = ({ selectedMd, onSave }) => {
           })
         }}>
           <button type="submit">Zapisz</button>
-          <textarea onChange={(e) => { setCurrentValue(e.target.value); }}>
+          <textarea
+            onChange={(e) => { setCurrentValue(e.target.value); }}
+            onKeyDown={insertTab}
+          >
             {currentValue}
           </textarea>
         </form>
