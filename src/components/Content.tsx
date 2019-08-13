@@ -2,7 +2,7 @@ import React, { TextareaHTMLAttributes, FormEvent } from 'react';
 import Markdown from 'markdown-it';
 import { Item } from '../App';
 import { insertTab } from '../utils/insertTab';
-import { HtmlAttributes, ResizeProperty, BoxSizingProperty } from 'csstype';
+import { ResizeProperty, BoxSizingProperty, OverflowYProperty } from 'csstype';
 
 const Md = new Markdown({ breaks: true });
 
@@ -73,6 +73,7 @@ const css = {
     width: '100%',
     padding: '8px',
     resize: 'none' as ResizeProperty,
+    overflowY: 'auto' as OverflowYProperty,
   }
 }
 

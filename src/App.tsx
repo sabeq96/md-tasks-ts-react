@@ -5,6 +5,7 @@ import Menu from './components/Menu';
 
 import { DbManager, IDbManager } from './utils/DbManager';
 import { getDraft } from './utils/getDraft';
+import { OverflowYProperty } from 'csstype';
 
 export interface Item {
   id: number
@@ -60,6 +61,7 @@ const css = {
   wrapper: {
     display: 'flex',
     width: '550px',
+    height: '400px',
     alignItems: 'stretch',
   },
   sidebar: {

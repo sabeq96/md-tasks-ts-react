@@ -1,6 +1,7 @@
 import React from 'react'
 import { Item } from '../App';
 import { getDraft } from '../utils/getDraft';
+import { OverflowYProperty } from 'csstype';
 
 interface Menu {
   items: Item[]
@@ -33,6 +34,8 @@ const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
 const css = {
   wrapper: {
     margin: '8px 0',
+    overflowY: 'auto' as OverflowYProperty,
+    height: '100%',
   },
   itemWrapper: {
     display: 'flex',
