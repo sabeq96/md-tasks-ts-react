@@ -11,7 +11,7 @@ interface Menu {
 
 const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
   <div style={css.wrapper}>
-    <div onClick={() => { setSelectedMd(getDraft()) }}>
+    <div style={css.title} onClick={() => { setSelectedMd(getDraft()) }}>
       - Nowy -
     </div>
     {items.map((item) => (
