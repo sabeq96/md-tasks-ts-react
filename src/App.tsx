@@ -46,12 +46,26 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="App">
-      <Login setBinId={saveBinId} binId={dbManager.binId} />
-      <Menu items={mds} setSelectedMd={setSelectedMd} deleteMd={deleteMd} />
+    <div style={css.wrapper}>
+      <div style={css.sidebar}>
+        <Login setBinId={saveBinId} binId={dbManager.binId} />
+        <Menu items={mds} setSelectedMd={setSelectedMd} deleteMd={deleteMd} />
+      </div>
       <Content selectedMd={selectedMd} onSave={saveMdsHandler} />
     </div>
   )
+}
+
+const css = {
+  wrapper: {
+    display: 'flex',
+    width: '550px',
+    alignItems: 'stretch',
+  },
+  sidebar: {
+    width: '120px',
+    marginRight: '8px',
+  }
 }
 
 export default App;

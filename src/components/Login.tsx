@@ -15,15 +15,25 @@ const Login: React.FC<Login> = ({ setBinId, binId }) => {
   }, [binId])
 
   return (
-    <form onSubmit={(e) => {
+    <form style={css.form} onSubmit={(e) => {
       e.preventDefault()
       setBinId(value);
     }}>
-      <input type="text" placeholder="Bin id" onChange={(e) => setValue(e.target.value)} value={value} disabled={disabled} />
+      <input style={css.input} type="text" placeholder="Bin id" onChange={(e) => setValue(e.target.value)} value={value} disabled={disabled} />
       <button type="submit" disabled={disabled}>Ok</button>
       <input type="checkbox" checked={disabled} onClick={() => { setDisabled(!disabled) }} />
     </form>
   );
 };
+
+const css = {
+  form: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  input: {
+    width: '60px',
+  }
+}
 
 export default Login

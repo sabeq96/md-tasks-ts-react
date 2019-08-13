@@ -9,7 +9,7 @@ interface Menu {
 }
 
 const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
-  <div>
+  <div style={css.wrapper}>
     {items.map((item) => (
       <div style={css.itemWrapper}>
         <div style={css.title} onClick={() => { setSelectedMd(item) }}>
@@ -31,6 +31,9 @@ const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
 );
 
 const css = {
+  wrapper: {
+    margin: '8px 0',
+  },
   itemWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
