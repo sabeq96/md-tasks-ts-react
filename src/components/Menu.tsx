@@ -11,11 +11,15 @@ interface Menu {
 const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
   <div>
     {items.map((item) => (
-      <div style={{ display: 'flex' }}>
-        <div onClick={() => { setSelectedMd(item) }}>
-          {item.text.substring(0, 15)}
+      <div style={css.itemWrapper}>
+        <div style={css.title} onClick={() => { setSelectedMd(item) }}>
+          {item.text ? (
+            item.text.substring(0, 15)
+          ): (
+            String('-Pusty-')
+          )}
         </div>
-        <div style={{ marginLeft: 10 }} onClick={() => { deleteMd(item) }}>
+        <div style={css.delete} onClick={() => { deleteMd(item) }}>
           [x]
         </div>
       </div>
@@ -25,5 +29,19 @@ const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
     </div>
   </div>
 );
+
+const css = {
+  itemWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  title: {
+    cursor: 'pointer',
+  },
+  delete: {
+    marginLeft: 10,
+    cursor: 'pointer',
+  }
+}
 
 export default Menu

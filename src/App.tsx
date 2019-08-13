@@ -3,93 +3,51 @@ import Login from './components/Login';
 import Content from './components/Content';
 import Menu from './components/Menu';
 
+import { DbManager, IDbManager } from './utils/DbManager';
 import { getDraft } from './utils/getDraft';
 
 export interface Item {
   id: number
   text: string
   modified: number
+  isDraft: boolean
 }
-
-interface DbConf {
-  baseUrl: string,
-  headers: Headers,
-}
-
-const dbConf: DbConf = {
-  baseUrl: 'https://api.myjson.com/bins/',
-  headers: new Headers({
-    'content-type': "application/json; charset=utf-8",
-  })
-}
-
-const getMdsFromDb = (binId: string): Promise<Item[]> => (
-  fetch(dbConf.baseUrl + binId)
-  .then((response) => ( response.json() ))
-  .then((response) => ( response && response.mds ))
-)
-
-const setMdsToDb = (binId: string, mds: Item[] ): Promise<Item[]> => (
-  fetch(dbConf.baseUrl + binId, {
-      method: 'PUT',
-      body: JSON.stringify({ mds }),
-      headers: dbConf.headers,
-  })
-  .then((response) => ( response.json() ))
-  .then((response) => ( response && response.mds ))
-)
 
 const App: React.FC = () => {
-  const [binId, setBinId] = React.useState<string>('')
+  const [dbManager, setDbManager] = React.useState<IDbManager>(new DbManager())
   const [selectedMd, setSelectedMd] = React.useState<Item>(getDraft())
   const [mds, setMds] = React.useState<Item[]>([])
 
-  // Get mds after bin id change
   React.useEffect(() => {
-    if (binId) {
-      getMdsFromDb(binId).then((mds) => {
-        setMds(mds || [])
-        setSelectedMd(mds[0])
+    if (!dbManager.binId) {
+      chrome.storage.sync.get('binId', (data) => {
+        const newDbManager = new DbManager(data.binId);
+        newDbManager.reinitialize().then((mds) => {
+          setDbManager(newDbManager)
+          setMds(mds)
+          setSelectedMd(mds[0] || getDraft())
+        })
       })
     }
-  }, [binId])
-
-  // Get saved binId from chrome
-  React.useEffect(() => {
-    chrome.storage.sync.get('binId', (data) => {
-      if (data.binId) {
-        setBinId(data.binId)
-      }
-    })
   }, [])
 
   const saveBinId = (binId: string): void => {
-    chrome.storage.sync.set({ binId }, () => {
-      setBinId(binId)
-    })
+    setDbManager(new DbManager(binId))
   }
 
   const saveMdsHandler = (value: Item) => {
-    const index = mds.indexOf(mds.filter((md) => md.id === value.id)[0])
-    const newMds = [...mds]
-    if (index !== -1) { // modify exist
-      newMds[index] = value
-    } else { // add new
-      newMds.push(value)
-    }
-
-    setMdsToDb(binId, newMds).then(setMds)
+    const newMds = dbManager.setMd(value)
+    setMds(newMds);
   }
 
   const deleteMd = (value: Item) => {
-    const newMds = [...mds].filter((md) => ( md.id !== value.id ));
-
-    setMdsToDb(binId, newMds).then(setMds)
+    const newMds = dbManager.deleteMd(value)
+    setMds(newMds);
   }
 
   return (
     <div className="App">
-      <Login setBinId={saveBinId} binId={binId} />
+      <Login setBinId={saveBinId} binId={dbManager.binId} />
       <Menu items={mds} setSelectedMd={setSelectedMd} deleteMd={deleteMd} />
       <Content selectedMd={selectedMd} onSave={saveMdsHandler} />
     </div>
