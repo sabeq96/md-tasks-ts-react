@@ -1,13 +1,8 @@
 import React from 'react'
+import { Item } from '../App';
+import { getDraft } from '../utils/getDraft';
 
-export interface Item {
-  id: number
-  text: string
-  created: number
-  modified: number
-}
-
-export interface Menu {
+interface Menu {
   items: Item[]
   setSelectedMd(md: Item): void
 }
@@ -15,10 +10,18 @@ export interface Menu {
 const Menu: React.FC<Menu> = ({ items, setSelectedMd }) => (
   <div>
     {items.map((item) => (
-      <div onClick={() => { setSelectedMd(item) }}>
-        {item.text.substring(0, 20)}
+      <div style={{ display: 'flex' }}>
+        <div onClick={() => { setSelectedMd(item) }}>
+          {item.text.substring(0, 15)}
+        </div>
+        <div style={{ marginLeft: 10 }} onClick={() => { }}>
+          [x]
+        </div>
       </div>
     ))}
+    <div onClick={() => { setSelectedMd(getDraft()) }}>
+      New Markdown
+    </div>
   </div>
 );
 

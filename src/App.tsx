@@ -1,14 +1,22 @@
 import React from 'react';
 import Login from './components/Login';
 import Content from './components/Content';
-import Menu, { Item } from './components/Menu';
+import Menu from './components/Menu';
 
-interface dbConf {
+import { getDraft } from './utils/getDraft';
+
+export interface Item {
+  id: number
+  text: string
+  modified: number
+}
+
+interface DbConf {
   baseUrl: string,
   headers: Headers,
 }
 
-const dbConf: dbConf = {
+const dbConf: DbConf = {
   baseUrl: 'https://api.myjson.com/bins/',
   headers: new Headers({
     'content-type': "application/json; charset=utf-8",
@@ -19,12 +27,10 @@ const db = {
   mds: [{
     id: 1,
     text: "Sample markdown file",
-    created: 1565548994814,
     modified: 1565548994814,
   }, {
     id: 2,
     text: "Sample markdown file 2",
-    created: 1565548994814,
     modified: 1565548994814,
   }]
 }
@@ -47,7 +53,7 @@ const setMdsToDb = (binId: string, mds: Item[] ): Promise<Item[]> => (
 
 const App: React.FC = () => {
   const [binId, setBinId] = React.useState<string>('')
-  const [selectedMd, setSelectedMd] = React.useState<Item>(db.mds[0])
+  const [selectedMd, setSelectedMd] = React.useState<Item>(getDraft())
   const [mds, setMds] = React.useState<Item[]>([])
 
   React.useEffect(() => {
@@ -76,7 +82,11 @@ const App: React.FC = () => {
   const saveMdsHandler = (value: Item) => {
     const index = mds.indexOf(mds.filter((md) => md.id === value.id)[0])
     const newMds = [...mds]
-    newMds[index] = value
+    if (index !== -1) { // modify exist
+      newMds[index] = value
+    } else { // add new
+      newMds.push(value)
+    }
 
     setMdsToDb(binId, newMds).then(setMds)
   }

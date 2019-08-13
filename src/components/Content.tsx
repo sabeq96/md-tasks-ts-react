@@ -1,6 +1,6 @@
 import React from 'react';
 import Markdown from 'markdown-it';
-import { Item } from './Menu';
+import { Item } from '../App';
 import { insertTab } from '../utils/insertTab';
 
 const Md = new Markdown({ breaks: true });
@@ -16,7 +16,7 @@ const Content: React.FC<Content> = ({ selectedMd, onSave }) => {
 
   React.useEffect(() => {
     setCurrentValue(selectedMd.text);
-    setPreview(true);
+    setPreview(Boolean(selectedMd.text));
   }, [selectedMd]);
 
   return (
@@ -33,7 +33,7 @@ const Content: React.FC<Content> = ({ selectedMd, onSave }) => {
           onSave({
             ...selectedMd,
             text: currentValue,
-            modified: new Date().getTime()
+            modified: new Date().getTime(),
           })
         }}>
           <button type="submit">Zapisz</button>
