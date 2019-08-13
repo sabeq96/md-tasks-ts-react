@@ -11,23 +11,21 @@ interface Menu {
 
 const Menu: React.FC<Menu> = ({ items, setSelectedMd, deleteMd }) => (
   <div style={css.wrapper}>
+    <div onClick={() => { setSelectedMd(getDraft()) }}>
+      - Nowy -
+    </div>
     {items.map((item) => (
       <div style={css.itemWrapper}>
         <div style={css.title} onClick={() => { setSelectedMd(item) }}>
           {item.text ? (
             item.text.substring(0, 15)
-          ): (
-            String('-Pusty-')
-          )}
+          ) : ('- Pusty -')}
         </div>
         <div style={css.delete} onClick={() => { deleteMd(item) }}>
           [x]
         </div>
       </div>
     ))}
-    <div onClick={() => { setSelectedMd(getDraft()) }}>
-      New Markdown
-    </div>
   </div>
 );
 
